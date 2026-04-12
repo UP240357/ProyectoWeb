@@ -10,7 +10,9 @@ router.get('/users', async (req, res) => {
         const [rows] = await db.query('SELECT id, name, email, rol FROM Users');
         res.json(rows);
     } catch (error) {
-        res.status(500).json({ message: "Error en la base de datos" });
+        res.status(500).json({ message: "Error en la base de datos",
+            sqlError: error.message
+         });
     }
 });
 module.exports = router;
