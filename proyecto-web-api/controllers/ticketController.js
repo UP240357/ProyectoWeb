@@ -2,13 +2,16 @@ const db = require('../config/db');
 exports.createTicket = async (req, res) => {
     const { title, description, type_id, priority, created_by } = req.body;
     try {
+        if (!title || !description || !type_id || !created_by) {
+            return res.status(400).json({ message: "Faltan campos obligatorios" });
+        }
         await db.query(
             'INSERT INTO Tickets (title, description, type_id, priority, created_by) VALUES (?, ?, ?, ?, ?)',
             [title, description, type_id, priority, created_by]
         );
-        res.status(201).json({ message: "Ticket creado exitosamente" });
+        res.status(201).json({ message: "Ticket creado exitosamente" }); [cite: 205]
     } catch (error) {
-        res.status(400).json({ message: "Error al crear ticket", error });
+        res.status(500).json({ message: "Error al crear ticket", sqlError: error.message });
     }
 };
 exports.getTickets = async (req, res) => {
