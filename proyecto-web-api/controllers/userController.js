@@ -23,7 +23,6 @@ const createUser = async (req, res) => {
     res.status(500).json({ mensaje: "Error al crear usuario", detalle: error.message });
   }
 };
-
 const getUsers = async (req, res) => {
   try {
     // La rúbrica menciona "Paginación y Ordenamiento" como extras
