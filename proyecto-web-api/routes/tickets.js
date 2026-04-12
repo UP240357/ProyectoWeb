@@ -10,5 +10,4 @@ router.patch('/tickets/:id/status', ticketController.updateStatus);
 router.delete('/tickets/:id', ticketController.deleteTicket);
 router.post('/tickets/assign', ticketController.assignTicket);
 router.get('/tickets/user/:id', ticketController.getTicketsByUser);
-
 module.exports = router;

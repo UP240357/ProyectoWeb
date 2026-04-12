@@ -1,5 +1,4 @@
 const db = require('../config/db');
-const bcrypt = require('bcryptjs');
 const { hashPassword } = require('../config/seguridad');
 
 exports.createUser = async (req, res) => {
@@ -60,7 +59,6 @@ exports.filterUsers = async (req, res) => {
         res.status(500).json({ message: "Error al filtrar usuarios", sqlError: error.message });
     }
 };
-
 exports.updateStatus = async (req, res) => {
     const { id } = req.params;
     const { active } = req.body; // boolean 1 o 0

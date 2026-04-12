@@ -73,10 +73,19 @@ exports.updateStatus = async (req, res) => {
 exports.assignTicket = async (req, res) => {
     const { id_ticket, id_user } = req.body;
     try {
+        const [userRows] = await db.query('SELECT rol FROM Users WHERE id = ?', [id_user]);
+        if (userRows.length === 0) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+        if (userRows[0].rol !== 'dev') {
+            return res.status(403).json({ 
+                message: "Error de asignación: Solo los usuarios con rol 'dev' pueden recibir tickets" 
+            });
+        }
         await db.query('INSERT INTO Tickets_Devs (id_ticket, id_user) VALUES (?, ?)', [id_ticket, id_user]);
-        res.status(201).json({ message: "Ticket asignado al desarrollador" });
+        res.status(201).json({ message: "Ticket asignado al desarrollador exitosamente" });
     } catch (error) {
-        res.status(400).json({ message: "Error en la asignación" });
+        res.status(500).json({ message: "Error en el servidor", detalle: error.message });
     }
 };
 exports.deleteTicket = async (req, res) => {
