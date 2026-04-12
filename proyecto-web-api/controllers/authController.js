@@ -20,3 +20,10 @@ exports.login = async (req, res) => {
         res.status(500).json({ message: "Error en el servidor" });
     }
 };
+exports.login = async (req, res) => {
+    res.send("Login funcional");
+};
+
+exports.getProfile = async (req, res) => {
+    res.send("Perfil del usuario");
+};

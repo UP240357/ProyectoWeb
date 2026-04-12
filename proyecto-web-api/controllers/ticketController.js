@@ -9,7 +9,7 @@ exports.createTicket = async (req, res) => {
             'INSERT INTO Tickets (title, description, type_id, priority, created_by) VALUES (?, ?, ?, ?, ?)',
             [title, description, type_id, priority, created_by]
         );
-        res.status(201).json({ message: "Ticket creado exitosamente" }); [cite: 205]
+        res.status(201).json({ message: "Ticket creado exitosamente" });
     } catch (error) {
         res.status(500).json({ message: "Error al crear ticket", sqlError: error.message });
     }
