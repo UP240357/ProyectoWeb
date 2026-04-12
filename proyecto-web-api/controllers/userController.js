@@ -35,6 +35,42 @@ exports.getUser = async (req, res) => {
     });
   }
 };
+exports.getUserById = async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT id, name, last_name, username, email, rol, career_id, active FROM Users WHERE id = ?', [req.params.id]);
+        if (rows.length === 0) return res.status(404).json({ message: "Usuario no encontrado" });
+        res.json(rows[0]);
+    } catch (error) {
+        res.status(500).json({ message: "Error al buscar usuario", sqlError: error.message });
+    }
+};
+exports.filterUsers = async (req, res) => {
+    const { name, email, rol } = req.query;
+    let query = 'SELECT id, name, email, rol, career_id FROM Users WHERE 1=1';
+    let params = [];
+
+    if (name) { query += ' AND name LIKE ?'; params.push(`%${name}%`); }
+    if (email) { query += ' AND email LIKE ?'; params.push(`%${email}%`); }
+    if (rol) { query += ' AND rol = ?'; params.push(rol); }
+
+    try {
+        const [rows] = await db.query(query, params);
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ message: "Error al filtrar usuarios", sqlError: error.message });
+    }
+};
+
+exports.updateStatus = async (req, res) => {
+    const { id } = req.params;
+    const { active } = req.body; // boolean 1 o 0
+    try {
+        await db.query('UPDATE Users SET active = ? WHERE id = ?', [active, id]);
+        res.json({ message: "Estado de usuario actualizado" });
+    } catch (error) {
+        res.status(500).json({ message: "Error al actualizar estado" });
+    }
+};
 exports.updateUser = async (req, res) => {
   const { id } = req.params;
   const fields = req.body;
@@ -47,4 +83,13 @@ exports.updateUser = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Error al actualizar" });
   }
+};
+exports.deleteUser = async (req, res) => {
+    const { id } = req.params;
+    try {
+        await db.query('UPDATE Users SET active = 0 WHERE id = ?', [id]);
+        res.json({ message: "Usuario eliminado correctamente" });
+    } catch (error) {
+        res.status(500).json({ message: "Error al eliminar usuario" });
+    }
 };

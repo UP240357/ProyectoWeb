@@ -29,6 +29,35 @@ exports.getTickets = async (req, res) => {
         res.status(500).json({ message: "Error al consultar tickets" });
     }
 };
+exports.getTicketById = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [rows] = await db.query('SELECT * FROM Tickets WHERE id = ?', [id]);
+        if (rows.length === 0) return res.status(404).json({ message: "Ticket no encontrado" });
+        res.json(rows[0]);
+    } catch (error) {
+        res.status(500).json({ message: "Error al consultar ticket" });
+    }
+};
+exports.getTicketsByUser = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [rows] = await db.query('SELECT * FROM Tickets WHERE created_by = ?', [id]);
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ message: "Error al consultar los tickets del usuario" });
+    }
+};
+exports.updateTicket = async (req, res) => {
+    const { id } = req.params;
+    const { title, description, priority } = req.body;
+    try {
+        await db.query('UPDATE Tickets SET title = ?, description = ?, priority = ? WHERE id = ?', [title, description, priority, id]);
+        res.json({ message: "Ticket actualizado exitosamente" });
+    } catch (error) {
+        res.status(500).json({ message: "Error al actualizar ticket" });
+    }
+};
 // Cambiar estado (open, in_progress, closed) 
 exports.updateStatus = async (req, res) => {
     const { id } = req.params;
@@ -48,5 +77,14 @@ exports.assignTicket = async (req, res) => {
         res.status(201).json({ message: "Ticket asignado al desarrollador" });
     } catch (error) {
         res.status(400).json({ message: "Error en la asignación" });
+    }
+};
+exports.deleteTicket = async (req, res) => {
+    const { id } = req.params;
+    try {
+        await db.query('DELETE FROM Tickets WHERE id = ?', [id]);
+        res.json({ message: "Ticket eliminado" });
+    } catch (error) {
+        res.status(500).json({ message: "Error al eliminar ticket" });
     }
 };

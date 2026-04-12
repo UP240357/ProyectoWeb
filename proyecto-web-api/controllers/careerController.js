@@ -27,3 +27,22 @@ exports.filterCareers = async (req, res) => {
         res.status(500).send(error);
     }
 };
+exports.updateCareer = async (req, res) => {
+    const { id } = req.params;
+    const { name, active } = req.body;
+    try {
+        await db.query('UPDATE Careers SET name = ?, active = ? WHERE id = ?', [name, active, id]);
+        res.json({ message: "Carrera actualizada exitosamente" });
+    } catch (error) {
+        res.status(500).json({ message: "Error al actualizar la carrera" });
+    }
+};
+exports.deleteCareer = async (req, res) => {
+    const { id } = req.params;
+    try {
+        await db.query('UPDATE Careers SET active = 0 WHERE id = ?', [id]);
+        res.json({ message: "Carrera eliminada exitosamente" });
+    } catch (error) {
+        res.status(500).json({ message: "Error al eliminar la carrera" });
+    }
+};

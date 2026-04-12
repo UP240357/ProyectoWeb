@@ -11,10 +11,17 @@ exports.login = async (req, res) => {
         const validPass = await comparePassword(password, user.password);
 
         if (!validPass) {
+            await db.query('UPDATE Users SET failed_attempts = failed_attempts + 1 WHERE id = ?', [user.id]);
+            if (user.failed_attempts + 1 >= 5) {
+                await db.query('UPDATE Users SET active = 0 WHERE id = ?', [user.id]);
+                return res.status(401).json({ message: "Cuenta bloqueada por demasiados intentos fallidos" });
+            }
             return res.status(401).json({ message: "Credenciales incorrectas" });
+            
         }
 
         res.status(200).json({ message: "Login exitoso" });
+        await db.query('UPDATE Users SET failed_attempts = 0 WHERE id = ?', [user.id]);
     } catch (error) {
         res.status(500).json({ message: "Error", detalle: error.message});
         

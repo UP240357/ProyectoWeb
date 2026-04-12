@@ -5,7 +5,13 @@ const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 router.post('/auth/login', authController.login);
 router.post('/users', userController.createUser);
+router.put('/users', userController.createUser);
 router.get('/users', userController.getUser);
+router.get('/users/:id', userController.getUserById);
+router.get('/users/filter', userController.filterUsers);
+router.put('/users/:id', userController.updateUser);
+router.patch('/users/:id/status', userController.updateStatus);
+router.delete('/users/:id', userController.deleteUser)
 /*
 router.get('/users', async (req, res) => {
     try {
