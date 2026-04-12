@@ -1,38 +1,22 @@
-const db = require("../config/db");
-
-const login = async (req, res) => {
-  const { username, password } = req.body;
-
-  try {
-    // Encontrar a usuario
-    const [rows] = await db.query("SELECT * FROM Users WHERE username = ?", [username]);
-    if (rows.length === 0) {
-      return res.status(404).json({ mensaje: "Usuario no encontrado" });
+const db = require('../config/db');
+const bcrypt = require('bcryptjs');
+exports.login = async (req, res) => {
+    const { username, password } = req.body;
+    try {
+        const [rows] = await db.query('SELECT * FROM Users WHERE username = ?', [username]);
+        const user = rows[0];
+        if (!user || user.active === 0) {
+            return res.status(401).json({ message: "Usuario no encontrado o inactivo" });
+        }
+        const validPass = await bcrypt.compare(password, user.password);
+        if (!validPass) {
+            await db.query('UPDATE Users SET failed_attempts = failed_attempts + 1 WHERE id = ?', [user.id]);
+            return res.status(401).json({ message: "Credenciales incorrectas" });
+        }
+        await db.query('UPDATE Users SET failed_attempts = 0 WHERE id = ?', [user.id]);
+        res.status(200).json({ message: "Login exitoso", user: { id: user.id, rol: user.rol } });
+        
+    } catch (error) {
+        res.status(500).json({ message: "Error en el servidor" });
     }
-    const user = rows[0];
-    //Contraseñas ++ (si se equivoca de contraseña, se añade +1 a "failed_attempts", sino se reinicia el contador)
-    if (user.password === password) {
-      // t odo bien
-      await db.query("UPDATE Users SET failed_attempts = 0 WHERE id = ?", [user.id]);
-      return res.json({ 
-        mensaje: "Validación exitosa", 
-        user: { id: user.id, username: user.username, rol: user.rol } 
-      });
-    } else {// mal
-      const nuevosIntentos = user.failed_attempts + 1;
-      await db.query("UPDATE Users SET failed_attempts = ? WHERE id = ?", [nuevosIntentos, user.id]);
-
-      return res.status(401).json({ 
-        mensaje: "Error de validación: contraseña incorrecta",
-        intentos_fallidos: nuevosIntentos 
-      });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ mensaje: "Error interno del servidor" });
-  }
-};
-
-module.exports = {
-  login
 };

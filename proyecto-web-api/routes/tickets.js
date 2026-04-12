@@ -1,14 +1,12 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const ticketController = require("../controllers/ticketController");
-router.post('/', ticketController.createTicket);
-router.get('/', ticketController.getAllTickets);
-router.get('/filter', ticketController.filterTickets);
-router.get('/:id', ticketController.getTicketById);
-router.put('/:id', ticketController.updateTicket);
-router.patch('/:id/status', ticketController.updateStatus);
-router.delete('/:id', ticketController.deleteTicket);
-router.post('/assign', ticketController.assignTicket);
-router.get('/user/:id', ticketController.getTicketsByUser);
+const ticketCtrl = require('../controllers/ticketController');
+const kpiCtrl = require('../controllers/kpiController');
+router.post('/tickets', ticketCtrl.createTicket);
+router.get('/tickets', ticketCtrl.getTickets);
+router.patch('/tickets/:id/status', ticketCtrl.updateStatus);
+router.post('/tickets/assign', ticketCtrl.assignTicket);
+router.get('/kpi/tickets/status', kpiCtrl.getTicketsByStatus);
+router.get('/kpi/tickets/user', kpiCtrl.getTicketsByUser);
 
 module.exports = router;
