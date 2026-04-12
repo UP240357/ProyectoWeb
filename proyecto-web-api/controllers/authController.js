@@ -1,5 +1,5 @@
 const { comparePassword } = require('../config/seguridad');
-
+const db = require('../config/db');
 exports.login = async (req, res) => {
     const { username, password } = req.body;
     try {
@@ -16,6 +16,7 @@ exports.login = async (req, res) => {
 
         res.status(200).json({ message: "Login exitoso" });
     } catch (error) {
-        res.status(500).json({ message: "Error" });
+        res.status(500).json({ message: "Error", detalle: error.message});
+        
     }
 };

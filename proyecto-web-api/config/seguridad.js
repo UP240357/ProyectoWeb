@@ -5,7 +5,6 @@ const hashPassword = async (password) => {
     }
     return password;
 };
-
 const comparePassword = async (providedPassword, storedPassword) => {
     if (process.env.USE_HASH === 'true') {
         return await bcrypt.compare(providedPassword, storedPassword);

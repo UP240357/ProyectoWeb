@@ -5,6 +5,8 @@ const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 router.post('/auth/login', authController.login);
 router.post('/users', userController.createUser);
+router.get('/users', userController.getUser);
+/*
 router.get('/users', async (req, res) => {
     try {
         const [rows] = await db.query('SELECT id, name, email, rol, username, password, failed_attempts,  created_at,  career_id FROM Users');
@@ -15,4 +17,5 @@ router.get('/users', async (req, res) => {
          });
     }
 });
+*/
 module.exports = router;
