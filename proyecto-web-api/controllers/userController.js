@@ -1,17 +1,27 @@
 const db = require('../config/db');
 const bcrypt = require('bcryptjs');
+const { hashPassword } = require('../config/seguridad');
+
 exports.createUser = async (req, res) => {
     const { name, last_name, username, email, password, career_id } = req.body;
     try {
         if (!email || !username || !password) return res.status(400).json({ message: "Faltan datos" });
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const [usuarioExiste] = await db.query('SELECT id FROM Users WHERE username = ?', [username]);
+        if (usuarioExiste.length > 0) {
+            return res.status(400).json({ message: "El nombre de usuario no es válido, elija otro nombre" });
+        }
+        const [existeEmail] = await db.query('SELECT id FROM Users WHERE email = ?', [email]);
+        if (existeEmail.length > 0) {
+            return res.status(400).json({ message: "El correo no es válido, elija otro" });
+        }
+        const finalPassword = await hashPassword(password);
         await db.query(
             'INSERT INTO Users (name, last_name, username, email, password, career_id) VALUES (?, ?, ?, ?, ?, ?)',
-            [name, last_name, username, email, hashedPassword, career_id]
+            [name, last_name, username, email, finalPassword, career_id]
         );
         res.status(201).json({ message: "Usuario creado" });
     } catch (error) {
-        res.status(400).json({ message: "Email o Username ya existen" });
+        res.status(400).json({ message: "Error", error: error.message });
     }
 };
 exports.updateUser = async (req, res) => {
