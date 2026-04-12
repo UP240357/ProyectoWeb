@@ -47,3 +47,25 @@ exports.kpiStatus = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+//
+exports.getTicketsByUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const [tickets] = await db.query('SELECT * FROM Tickets WHERE created_by = ?', [id]);
+        res.status(200).json(tickets);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+//
+exports.updateStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        
+        await db.query('UPDATE Tickets SET status = ? WHERE id = ?', [status, id]);
+        res.status(200).json({ message: 'Estado del ticket actualizado' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
