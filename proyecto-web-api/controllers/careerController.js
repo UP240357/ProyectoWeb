@@ -19,12 +19,27 @@ exports.getCareers = async (req, res) => {
     }
 };
 exports.filterCareers = async (req, res) => {
-    const { name } = req.query;
+    const { name, id } = req.query;
+    let query = 'SELECT * FROM Careers WHERE 1=1';
+    let params = [];
+
+    if (name) { 
+        query += ' AND name LIKE ?'; 
+        params.push(`%${name}%`); 
+    }
+
+    if (id) { 
+        query += ' AND id = ?'; 
+        params.push(id); 
+    }
     try {
-        const [rows] = await db.query('SELECT * FROM Careers WHERE name LIKE ?', [`%${name}%`]);
+        const [rows] = await db.query(query, params);
+        if (rows.length === 0) {
+            return res.status(404).json({ message: "No se encontraron carreras con esos criterios" });
+        }
         res.json(rows);
     } catch (error) {
-        res.status(500).send(error);
+        res.status(500).json({ message: "Error al filtrar", error: error.message });
     }
 };
 exports.updateCareer = async (req, res) => {
