@@ -3,7 +3,7 @@ const router = express.Router();
 const ticketController = require('../controllers/ticketController');
 router.post('/tickets', ticketController.createTicket); 
 router.get('/tickets', ticketController.getTickets); 
-router.get('/tickets/filter', ticketController.getTickets);
+router.get('/tickets/filter', ticketController.filterTickets);
 router.get('/tickets/:id', ticketController.getTicketById);
 router.put('/tickets/:id', ticketController.updateTicket);
 router.patch('/tickets/:id/status', ticketController.updateStatus);
