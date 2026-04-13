@@ -1,6 +1,5 @@
 const db = require('../config/db');
 const { hashPassword } = require('../config/seguridad');
-
 exports.createUser = async (req, res) => {
   const { name, last_name, username, email, password, career_id } = req.body;
   try {
@@ -71,8 +70,7 @@ exports.updateStatus = async (req, res) => {
 };
 exports.updateUser = async (req, res) => {
   const { id } = req.params;
-  const fields = req.body;
-  if (Object.keys(fields).length > 5) {
+  if (Object.keys(req.body).length > 5) {
     return res.status(400).json({ message: "Máximo 5 campos permitidos" });
   }
   try {

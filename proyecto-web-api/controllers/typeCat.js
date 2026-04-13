@@ -29,7 +29,14 @@ exports.deleteType = async (req, res) => {
 };
 exports.getCategories = async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT * FROM Categorías'); 
+        const [rows] = await db.query('SELECT * FROM Categorias'); 
         res.json(rows);
-    } catch (error) { res.status(500).json({ message: "Error al obtener categorías" }); }
+    } catch (error) { res.status(500).json({ message: "Error al obtener categorias" }); }
+};
+exports.createCategories = async (req, res) => {
+    const { name, description} = req.body;
+    try {
+        await db.query('INSERT INTO Categorias (name, description) VALUES (?, ?)', [name, description]);
+        res.status(201).json({ message: "Categoria creada" });
+    } catch (error) { res.status(500).json({ message: "Error al crear esa mamada (caategoria)" }); }
 };

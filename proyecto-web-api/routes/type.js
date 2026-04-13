@@ -7,4 +7,5 @@ router.put('/types/:id', typeCategoryController.updateType);
 router.delete('/types/:id', typeCategoryController.deleteType);
 //
 router.get('/categories', typeCategoryController.getCategories);
+router.post('/categories', typeCategoryController.createCategories);
 module.exports = router;
